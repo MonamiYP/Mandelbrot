@@ -27,12 +27,10 @@ float mandelbrot(vec2 c) {
 
 void main()
 {
-    vec2 uv = (gl_FragCoord.xy - 0.5*u_screenSize.xy) / u_screenSize.y;
+    vec2 norm = (gl_FragCoord.xy - 0.5*u_screenSize.xy) / u_screenSize.y;
     float zoom = pow(10, u_cameraPos.z);
-    vec2 c = uv  * zoom;
-    c += vec2(u_cameraPos.x, u_cameraPos.y);
+    vec2 c = norm  * zoom + vec2(u_cameraPos.x, u_cameraPos.y);
 
     float iteration = mandelbrot(c);
-
     fragmentColour =  vec4(vec3(iteration/u_maxIteration), 1); 
 }

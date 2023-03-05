@@ -98,13 +98,13 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPosy += speed;
+        cameraPosy += speed * pow(10, cameraPosz);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPosy -= speed;
+        cameraPosy -= speed * pow(10, cameraPosz);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPosx -= speed;
+        cameraPosx -= speed * pow(10, cameraPosz);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPosx += speed;
+        cameraPosx += speed * pow(10, cameraPosz);
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
         cameraPosz -= speed;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
@@ -112,5 +112,5 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
         if (maxIteration > 0) { --maxIteration; }
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        if (maxIteration < 200) { ++maxIteration; }
+        if (maxIteration < 500) { ++maxIteration; }
 }
