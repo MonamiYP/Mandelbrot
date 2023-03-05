@@ -17,7 +17,7 @@ void processInput(GLFWwindow* window);
 
 float cameraPosx = 0.0f;
 float cameraPosy = 0.0f;
-float scale = 1;
+float cameraPosz = 1.0f;
 float speed = 0.01f;
 float maxIteration = 50;
 
@@ -79,12 +79,7 @@ int main() {
 
         glUniform2f(shader.GetUniformLocation("u_screenSize"), 640, 480);
         shader.SetUniform1i("u_maxIteration", maxIteration);
-        glUniform2f(shader.GetUniformLocation("u_xLim"), 
-            -2.0f * scale + cameraPosx,
-            1.0f * scale + cameraPosx);
-        glUniform2f(shader.GetUniformLocation("u_yLim"),
-            -1.0f * scale + cameraPosy,
-            1.0f * scale + cameraPosy);
+        glUniform3f(shader.GetUniformLocation("u_cameraPos"), cameraPosx, cameraPosy, cameraPosz);
 
         renderer.Draw(VAO, IBO, shader);
         
@@ -111,9 +106,9 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPosx += speed;
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        scale -= speed;
+        cameraPosz -= speed;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-        scale += speed;
+        cameraPosz += speed;
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
         if (maxIteration > 0) { --maxIteration; }
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
