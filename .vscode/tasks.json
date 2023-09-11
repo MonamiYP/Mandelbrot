@@ -14,7 +14,7 @@
 				"-L${workspaceFolder}/lib",
 				"${workspaceFolder}/src/*.cpp",
 				"${workspaceFolder}/src/*.c",
-				"${workspaceFolder}/lib/libglfw.3.3.dylib",
+				"${workspaceFolder}/lib/libglfw.3.dylib",
 				"-o",
 				"${workspaceFolder}/run",
 				"-framework",
