@@ -97,10 +97,14 @@ void main()
     vec2 c = norm  * zoom + vec2(u_cameraPos.x, u_cameraPos.y);
 
     float iteration = fractal(c);
-    
+
     if (iteration == u_maxIteration) {
         fragmentColour = vec4(0, 0, 0, 1);
     } else {
-        fragmentColour =  vec4(iteration/u_maxIteration * 0.9 + 1.0, iteration/u_maxIteration * 0.3 + 0.3, 0, 1); 
+        fragmentColour = vec4((-cos(0.22*float(iteration))+1.0)/2.0,
+                      (-cos(0.025*float(iteration))+1.0)/2.0,
+                      (-cos(0.08*float(iteration))+1.0)/2.0,
+                      1.0);
+        //fragmentColour =  vec4(iteration/u_maxIteration * 0.9 + 0.8, iteration/u_maxIteration * 0.3 + 0.2, 0, 1); 
     }
 }
