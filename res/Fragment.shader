@@ -6,10 +6,6 @@ uniform vec2 u_screenSize;
 uniform vec3 u_cameraPos;
 uniform int u_maxIteration;
 
-vec2 ds_set(float num) {
-    return vec2(num, 0.0);
-}
-
 vec2 ds_add(vec2 ds_num1, vec2 ds_num2) {
     vec2 ds_ans;
     float t1, t2, e;
@@ -50,25 +46,19 @@ vec2 ds_mul(vec2 dsa, vec2 dsb) {
     return dsc;
 }
 
-vec2 burning_boat(vec2 z, vec2 c) {
-    vec2 new_z = vec2(abs(z.x), abs(z.y));
-    vec2 zr_double = ds_add(ds_mul(ds_set(new_z.x), ds_set(new_z.x)), -ds_mul(ds_set(new_z.y), ds_set(new_z.y)));
-    vec2 zi_double = ds_mul(ds_set(2.0), ds_mul(ds_set(new_z.x), ds_set(new_z.y)));
+vec4 burning_boat(vec4 z, vec4 c) {
+    vec4 new_z = vec4(abs(z.x), abs(z.y), abs(z.z), abs(z.w));
+    vec2 zr = ds_add(ds_mul(new_z.xy, new_z.xy), -ds_mul(new_z.zw, new_z.zw));
+    vec2 zi = ds_mul(vec2(2.0, 0.0), ds_mul(new_z.xy, new_z.zw));
 
-    float zr = zr_double.x;
-    float zi = zi_double.x;
-
-    return vec2(zr, zi) + c;
+    return vec4(zr, zi) + c;
 }
 
-vec2 mandelbrot_double(vec2 z, vec2 c) {
-    vec2 zr_double = ds_add(ds_mul(ds_set(z.x), ds_set(z.x)), -ds_mul(ds_set(z.y), ds_set(z.y)));
-    vec2 zi_double = ds_mul(ds_set(2.0), ds_mul(ds_set(z.x), ds_set(z.y)));
+vec4 mandelbrot_double(vec4 z, vec4 c) {
+    vec2 zr = ds_add(ds_mul(z.xy, z.xy), -ds_mul(z.zw, z.zw));
+    vec2 zi = ds_mul(vec2(2.0, 0.0), ds_mul(z.xy, z.zw));
 
-    float zr = zr_double.x;
-    float zi = zi_double.x;
-
-    return vec2(zr, zi) + c;
+    return vec4(zr, zi) + c;
 }
 
 vec2 mandelbrot(vec2 z, vec2 c) {
@@ -78,33 +68,46 @@ vec2 mandelbrot(vec2 z, vec2 c) {
     return vec2(zr, zi) + c;
 }
 
-float fractal(vec2 c) {
-    vec2 z = vec2(0.0);
+float fractal(vec4 c) {
+    vec4 z = vec4(0.0);
     float iteration = 0.0;
     while (iteration < u_maxIteration) {
-        z = burning_boat(z, c);
-        if (length(z) > 4.0)
+        z = mandelbrot_double(z, c);
+        if (length(z.xz) > 4.0)
             return iteration;
         iteration++;
     }
     return iteration;
 }
 
+// float fractal(vec2 c) {
+//     vec2 z = vec2(0.0);
+//     float iteration = 0.0;
+//     while (iteration < u_maxIteration) {
+//         z = mande(z, c);
+//         if (length(z) > 4.0)
+//             return iteration;
+//         iteration++;
+//     }
+//     return iteration;
+// }
+
 void main()
 {
     vec2 norm = (gl_FragCoord.xy - 0.5*u_screenSize.xy) / u_screenSize.y;
     float zoom = pow(10, u_cameraPos.z);
-    vec2 c = norm  * zoom + vec2(u_cameraPos.x, u_cameraPos.y);
+    vec2 c_pre = norm  * zoom  + vec2(u_cameraPos.x, u_cameraPos.y);
+    vec4 c = vec4(c_pre.x, 0, c_pre.y, 0);
 
     float iteration = fractal(c);
 
     if (iteration == u_maxIteration) {
         fragmentColour = vec4(0, 0, 0, 1);
     } else {
-        fragmentColour = vec4((-cos(0.22*float(iteration))+1.0)/2.0,
-                      (-cos(0.025*float(iteration))+1.0)/2.0,
-                      (-cos(0.08*float(iteration))+1.0)/2.0,
-                      1.0);
+        fragmentColour = vec4((-cos(0.2*iteration)+1.0)/1.0,
+                      (-cos(0.13*iteration)+1.0)/2.0,
+                      (-cos(0.1*iteration)+1.0)/1.5,
+                        1.0);
         //fragmentColour =  vec4(iteration/u_maxIteration * 0.9 + 0.8, iteration/u_maxIteration * 0.3 + 0.2, 0, 1); 
     }
 }

@@ -12,7 +12,6 @@
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 float cameraPosx = 0.0f;
@@ -20,6 +19,13 @@ float cameraPosy = 0.0f;
 float cameraPosz = 1.0f;
 float speed = 0.01f;
 float maxIteration = 50;
+
+int frameBuffer_width = 640;
+int frameBuffer_height = 480;
+
+void framebuffer_size_callback(GLFWwindow * window, int width, int height);
+
+Shader shader;
 
 int main() {
     if (!glfwInit())
@@ -64,20 +70,20 @@ int main() {
 
     IndexBuffer IBO(rect_indices, 6);
 
-    Shader shader;
-
     std::string vertex_source = shader.ParseShader("res/Vertex.shader");
     std::string fragment_source = shader.ParseShader("res/Fragment.shader");
     shader.CreateShaderProgram(vertex_source, fragment_source);
     shader.Bind();
+
+    glfwGetFramebufferSize(window, &frameBuffer_width, &frameBuffer_height);
+    glUniform2f(shader.GetUniformLocation("u_screenSize"), frameBuffer_width, frameBuffer_height);
 
     Renderer renderer;
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
         renderer.Clear();
-
-        glUniform2f(shader.GetUniformLocation("u_screenSize"), 640, 480);
+        
         shader.SetUniform1i("u_maxIteration", maxIteration);
         glUniform3f(shader.GetUniformLocation("u_cameraPos"), cameraPosx, cameraPosy, cameraPosz);
 
@@ -90,7 +96,8 @@ int main() {
     glfwTerminate();
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow * window, int width, int height) {
+    glUniform2f(shader.GetUniformLocation("u_screenSize"), width, height);
     glViewport(0, 0, width, height);
 }
 
